@@ -39,8 +39,7 @@
       border-radius: 5px;
       white-space: pre-wrap;
     }
-    h1,
-    h3 {
+    h1, h3 {
       color: #333;
     }
   </style>
@@ -93,19 +92,30 @@
       "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9"
     };
 
-    // বাংলা ডিজিট ইংরেজিতে রূপান্তর
-    function convertBanglaDigits(text) {
+    const englishToBanglaDigits = {
+      "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪",
+      "5": "৫", "6": "৬", "7": "৭", "8": "৮", "9": "৯"
+    };
+
+    const banglaToEnglishText = {
+      "ফলাফল": "Result",
+      "সংখ্যা": "Number",
+      "যোগফল": "Sum",
+      "নাম": "Name",
+      "ইনপুট": "Input",
+      "আউটপুট": "Output"
+    };
+
+    function convertBanglaDigitsToEnglish(text) {
       return text.replace(/[০-৯]/g, d => banglaDigits[d] || d);
     }
 
-    // ইনপুটেও বাংলা ডিজিট রূপান্তর (যা userInput থেকে নেবে)
-    function convertBanglaInputToEnglishDigits(input) {
-      return input.replace(/[০-৯]/g, d => banglaDigits[d] || d);
+    function convertEnglishDigitsToBangla(text) {
+      return text.replace(/\d/g, d => englishToBanglaDigits[d] || d);
     }
 
-    // বাংলা অপারেটর ও কীওয়ার্ড গুলো ইংরেজিতে রূপান্তর
     function replaceOperators(text) {
-      const keysSorted = Object.keys(mapC).sort((a,b) => b.length - a.length);
+      const keysSorted = Object.keys(mapC).sort((a, b) => b.length - a.length);
       for (const key of keysSorted) {
         const val = mapC[key];
         const re = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'g');
@@ -114,26 +124,32 @@
       return text;
     }
 
-    // সম্পূর্ণ বাংলা কোড থেকে C কোড তৈরির ফাংশন
     function translateBanglaToC(code) {
       let lines = code.split('\n');
       let cCode = `#include <stdio.h>\nint main() {\n`;
       lines.forEach(line => {
-        line = convertBanglaDigits(line);
+        line = convertBanglaDigitsToEnglish(line);
         line = replaceOperators(line);
+
+        // শুধু রূপান্তরিত C কোডে স্ট্রিং বাংলার শব্দ → ইংরেজি
+        line = line.replace(/"(.*?)"/g, (match, content) => {
+          let newContent = content;
+          for (const key in banglaToEnglishText) {
+            newContent = newContent.replace(new RegExp(key, 'g'), banglaToEnglishText[key]);
+          }
+          return `"${newContent}"`;
+        });
+
         cCode += "  " + line + "\n";
       });
       cCode += "  return 0;\n}";
       return cCode;
     }
 
-    // রান করার প্রধান ফাংশন
     function runBanglaCCode() {
       const banglaCode = document.getElementById("banglaCode").value;
-
-      // ইউজারের ইনপুট থেকে বাংলা ডিজিট ইংরেজিতে কনভার্ট করা
       const userInputRaw = document.getElementById("userInput").value;
-      const userInput = convertBanglaInputToEnglishDigits(userInputRaw);
+      const userInput = convertBanglaDigitsToEnglish(userInputRaw);
 
       const translatedCode = translateBanglaToC(banglaCode);
       document.getElementById("debug").textContent = translatedCode;
@@ -151,15 +167,24 @@
       })
       .then(res => res.json())
       .then(data => {
-        let output = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
-        document.getElementById("output").textContent = output.trim();
+        let raw = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
+        let converted = convertEnglishDigitsToBangla(raw);
+
+        // আউটপুটে ইংরেজি → বাংলা (শব্দ)
+        for (const key in banglaToEnglishText) {
+          const eng = banglaToEnglishText[key];
+          const bn = key;
+          const regex = new RegExp(eng, 'g');
+          converted = converted.replace(regex, bn);
+        }
+
+        document.getElementById("output").textContent = converted.trim();
       })
       .catch(err => {
         document.getElementById("output").textContent = "❌ ত্রুটি: " + err.message;
       });
     }
 
-    // সব ফিল্ড ক্লিয়ার করার জন্য
     function clearAll() {
       document.getElementById("banglaCode").value = "";
       document.getElementById("userInput").value = "";
