@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>বাংলা কম্পাইলার</title>
+  <style>
+    body {
+      font-family: 'Noto Sans Bengali', sans-serif;
+      background: #eef1f4;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 160px;
+      font-size: 16px;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    pre {
+      background-color: #111;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+    h1,
+    h3 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔤 বাংলা কম্পাইলার</h1>
+
+  <label>✍️ বাংলা C কোড লিখুন:</label>
+  <textarea id="banglaCode" placeholder="এখানে বাংলা C প্রোগ্রামিং কোড লিখুন..."></textarea>
+
+  <label>📥 ইনপুট দিন (যদি থাকে):</label>
+  <textarea id="userInput" placeholder="যদি ইনপুট থাকে, এখানে দিন... (বাংলা সংখ্যাও চলবে)"></textarea>
+
+  <div>
+    <button onclick="runBanglaCCode()">▶️ রান করো</button>
+    <button onclick="clearAll()">🧹 পরিষ্কার করো</button>
+  </div>
+
+  <h3>📤 আউটপুট:</h3>
+  <pre id="output">এখানে আউটপুট আসবে...</pre>
+
+  <h3>🔎 রূপান্তরিত C কোড:</h3>
+  <pre id="debug">...</pre>
+
+  <script>
+    const mapC = {
+      "লিখো": "printf",
+      "সংখ্যা_নাও": "scanf",
+      "যদি": "if",
+      "নাহলে": "else",
+      "জন্য": "for",
+      "যতক্ষণ": "while",
+      "ফাংশন": "void",
+      "প্রত্যাবর্তন": "return",
+      "পূর্ণসংখ্যা": "int",
+      "ভগ্নাংশ": "float",
+      "চর": "char",
+      "মূল": "main",
+      "সমান": "==",
+      "না_সমান": "!=",
+      "বড়": ">",
+      "ছোট": "<",
+      "এবং": "&&",
+      "অথবা": "||"
+    };
+
+    const banglaDigits = {
+      "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4",
+      "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9"
+    };
+
+    // বাংলা ডিজিট ইংরেজিতে রূপান্তর
+    function convertBanglaDigits(text) {
+      return text.replace(/[০-৯]/g, d => banglaDigits[d] || d);
+    }
+
+    // ইনপুটেও বাংলা ডিজিট রূপান্তর (যা userInput থেকে নেবে)
+    function convertBanglaInputToEnglishDigits(input) {
+      return input.replace(/[০-৯]/g, d => banglaDigits[d] || d);
+    }
+
+    // বাংলা অপারেটর ও কীওয়ার্ড গুলো ইংরেজিতে রূপান্তর
+    function replaceOperators(text) {
+      const keysSorted = Object.keys(mapC).sort((a,b) => b.length - a.length);
+      for (const key of keysSorted) {
+        const val = mapC[key];
+        const re = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'g');
+        text = text.replace(re, val);
+      }
+      return text;
+    }
+
+    // সম্পূর্ণ বাংলা কোড থেকে C কোড তৈরির ফাংশন
+    function translateBanglaToC(code) {
+      let lines = code.split('\n');
+      let cCode = `#include <stdio.h>\nint main() {\n`;
+      lines.forEach(line => {
+        line = convertBanglaDigits(line);
+        line = replaceOperators(line);
+        cCode += "  " + line + "\n";
+      });
+      cCode += "  return 0;\n}";
+      return cCode;
+    }
+
+    // রান করার প্রধান ফাংশন
+    function runBanglaCCode() {
+      const banglaCode = document.getElementById("banglaCode").value;
+
+      // ইউজারের ইনপুট থেকে বাংলা ডিজিট ইংরেজিতে কনভার্ট করা
+      const userInputRaw = document.getElementById("userInput").value;
+      const userInput = convertBanglaInputToEnglishDigits(userInputRaw);
+
+      const translatedCode = translateBanglaToC(banglaCode);
+      document.getElementById("debug").textContent = translatedCode;
+      document.getElementById("output").textContent = "⏳ রান হচ্ছে...";
+
+      fetch("https://emkc.org/api/v2/piston/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          language: "c",
+          version: "10.2.0",
+          files: [{ name: "main.c", content: translatedCode }],
+          stdin: userInput
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        let output = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
+        document.getElementById("output").textContent = output.trim();
+      })
+      .catch(err => {
+        document.getElementById("output").textContent = "❌ ত্রুটি: " + err.message;
+      });
+    }
+
+    // সব ফিল্ড ক্লিয়ার করার জন্য
+    function clearAll() {
+      document.getElementById("banglaCode").value = "";
+      document.getElementById("userInput").value = "";
+      document.getElementById("output").textContent = "এখানে আউটপুট আসবে...";
+      document.getElementById("debug").textContent = "...";
+    }
+  </script>
+</body>
+</html>
