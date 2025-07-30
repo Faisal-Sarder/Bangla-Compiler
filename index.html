@@ -3,101 +3,210 @@
 <head>
   <meta charset="UTF-8" />
   <title>বাংলা কম্পাইলার</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Noto Sans Bengali', sans-serif;
       padding: 40px 20px;
-      max-width: 960px;
-      margin: auto;
-      border-radius: 10px;
-      transition: background 0.3s, color 0.3s;
-    }
-    body.light {
       background: #f4f6f9;
       color: #1a1a1a;
+      transition: background 0.3s, color 0.3s;
     }
     body.dark {
       background: #1a1a1a;
       color: #eaeaea;
     }
-    h1 { font-size: 32px; margin-bottom: 10px; }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
     h3 {
       font-size: 20px;
       margin-top: 30px;
       margin-bottom: 10px;
       border-left: 4px solid #007bff;
       padding-left: 10px;
+      color: inherit;
     }
-    label { font-weight: bold; display: block; margin-top: 25px; font-size: 17px; }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 25px;
+      font-size: 17px;
+    }
+
     textarea {
-      width: 100%; height: 160px; font-size: 15px;
-      margin-top: 8px; padding: 12px 15px;
-      border: 1px solid #ccc; border-radius: 8px;
-      background-color: #fff; resize: vertical;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      height: 160px;
+      font-size: 15px;
+      margin-top: 8px;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      resize: vertical;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
+      transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+      color: #1a1a1a;
     }
-    textarea:hover {
+    body.dark textarea {
+      background-color: #2b2b2b;
+      border-color: #444;
+      color: #eaeaea;
+      box-shadow: inset 0 0 6px rgba(255,255,255,0.1);
+    }
+
+    textarea:focus {
       border-color: #007bff;
+      outline: none;
       background-color: #fdfdfd;
-      box-shadow: 0 0 5px rgba(0,123,255,0.2);
+      box-shadow: 0 0 5px rgba(0,123,255,0.3);
     }
+
+    body.dark textarea:focus {
+      background-color: #3a3a3a;
+    }
+
     button {
-      margin: 10px 8px 0 0; padding: 12px 24px;
-      background-color: #007bff; color: #fff;
-      border: none; border-radius: 8px;
-      font-size: 15px; font-weight: 600;
+      margin: 10px 8px 0 0;
+      padding: 12px 24px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.2s;
     }
+
     button:hover {
-      background-color: #0056b3; transform: translateY(-1px);
+      background-color: #0056b3;
+      transform: translateY(-1px);
     }
+
+    body.dark button {
+      background-color: #0d6efd;
+    }
+
+    body.dark button:hover {
+      background-color: #0b5ed7;
+    }
+
     pre {
-      background-color: #1e1e1e; color: #d4d4d4;
-      padding: 18px; border-radius: 8px;
-      white-space: pre-wrap; font-size: 15px;
-      overflow-x: auto; line-height: 1.6;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 18px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-size: 15px;
+      overflow-x: auto;
+      line-height: 1.6;
       box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      transition: background-color 0.3s, color 0.3s;
+      max-width: 800px;
     }
+
+    body.dark pre {
+      background-color: #2b2b2b;
+      color: #eaeaea;
+      box-shadow: inset 0 0 6px rgba(255,255,255,0.1);
+    }
+
     #history {
-      max-height: 220px; overflow-y: auto;
-      border: 1px solid #ccc; padding: 10px;
-      border-radius: 8px; margin-top: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
       background-color: #fafafa;
+      color: #444;
+      max-width: 800px;
     }
+
+    body.dark #history {
+      background-color: #2b2b2b;
+      border-color: #444;
+      color: #ccc;
+    }
+
     .history-item {
       padding: 8px;
-      color: #888;
       border-bottom: 1px solid #ddd;
       font-family: monospace;
     }
+
+    body.dark .history-item {
+      border-color: #555;
+    }
+
     .history-meta {
       font-size: 13px;
-      color: #888;
+      color: #666;
       margin-top: 4px;
+    }
+
+    body.dark .history-meta {
+      color: #aaa;
+    }
+
+    ::selection {
+      background: #007bff;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 0 10px;
+      }
+
+      textarea {
+        height: 140px;
+      }
+
+      button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      pre, #history {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body class="light">
-  <div style="text-align:right; margin-bottom:20px;">
+
+<div class="container">
+  <div style="text-align: right; margin-bottom: 20px;">
     <label>
       ◑ Dark Mode
-      <input type="checkbox" id="toggleMode" onchange="toggleMode()" style="transform:scale(1.2); margin-left:8px">
+      <input type="checkbox" id="toggleMode" onchange="toggleMode()" style="transform: scale(1.2); margin-left: 8px;">
     </label>
   </div>
+
   <h1>🖥️ বাংলা কম্পাইলার</h1>
 
-  <label>✍️ বাংলা C কোড লিখুন:</label>
-  <textarea id="banglaCode" placeholder="এখানে বাংলা C প্রোগ্রামিং কোড লিখুন..."></textarea>
+  <label for="banglaCode">✍️ বাংলা C কোড লিখুন:</label>
+  <textarea id="banglaCode" placeholder="এখানে বাংলা ভাষায় C কোড লিখুন..."></textarea>
 
-  <label>📥 ইনপুট দিন (যদি থাকে):</label>
-  <textarea id="userInput" placeholder="যদি ইনপুট থাকে, এখানে দিন..."></textarea>
+  <label for="userInput">📥 ইনপুট (যদি প্রয়োজন হয়):</label>
+  <textarea id="userInput" placeholder="ইনপুট দিন (যদি কোডে প্রয়োজন হয়)"></textarea>
 
   <div>
     <button onclick="runBanglaCCode()">▶️ রান করো</button>
-    <button onclick="clearAll()">🧹 পরিস্কার করো</button>
+    <button onclick="clearAll()">🧹 পরিষ্কার করো</button>
     <button onclick="saveCode()">💾 সেভ করো</button>
     <button onclick="loadCode()">📂 লোড করো</button>
     <button onclick="exportCCode()">📤 Export .c</button>
@@ -106,7 +215,7 @@
   <h3>📤 আউটপুট:</h3>
   <pre id="output">এখানে আউটপুট আসবে...</pre>
 
-  <h3>🔍 Live C কোড Preview:</h3>
+  <h3>🔎 রূপান্তরিত C কোড:</h3>
   <pre id="debug">...</pre>
 
   <h3>📜 রান হিস্ট্রি:</h3>
@@ -114,100 +223,189 @@
   <div style="margin-top: 10px;">
     <button onclick="clearHistory()">🧹 হিস্ট্রি মুছে ফেলো</button>
   </div>
+</div>
 
-  <script>
-    const mapC = {"প্রিন্ট":"printf","ইনপুট":"scanf","যদি":"if","নাহলে":"else","জন্য":"for","যতক্ষণ":"while","ফাংশন":"void","প্রত্যাবর্তন":"return","পূর্ণসংখ্যা":"int","ভগ্নাংশ":"float","চর":"char","মূল":"main","সমান":"==","না_সমান":"!=","বড়":">","ছোট":"<","এবং":"&&","অথবা":"||"};
-    const bnToEnDigits = {"০":"0","১":"1","২":"2","৩":"3","৪":"4","৫":"5","৬":"6","৭":"7","৮":"8","৯":"9"};
-    const enToBnDigits = {"0":"০","1":"১","2":"২","3":"৩","4":"৪","5":"৫","6":"৬","7":"৭","8":"৮","9":"৯"};
-    const textMap = {"ফলাফল":"Result","নাম":"Name","আউটপুট":"Output","ইনপুট":"Input"};
+<script>
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+    document.body.classList.toggle("light");
+  }
 
-    function convertBanglaDigitsToEnglish(text) {
-      return text.replace(/[০-৯]/g, d => bnToEnDigits[d] || d);
+  const mapC = {
+    "আউটপুট_দাও": "printf",
+    "ইনপুট_নাও": "scanf",
+    "যদি": "if",
+    "নাহলে": "else",
+    "জন্য": "for",
+    "যতক্ষণ": "while",
+    "ফাংশন": "void",
+    "প্রত্যাবর্তন": "return",
+    "পূর্ণসংখ্যা": "int",
+    "ভগ্নাংশ": "float",
+    "চর": "char",
+    "মূল": "main",
+    "সমান": "==",
+    "না_সমান": "!=",
+    "বড়": ">",
+    "ছোট": "<",
+    "এবং": "&&",
+    "অথবা": "||"
+  };
+
+  const banglaDigits = {
+    "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4",
+    "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9"
+  };
+
+  const englishToBanglaDigits = {
+    "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪",
+    "5": "৫", "6": "৬", "7": "৭", "8": "৮", "9": "৯"
+  };
+
+  const banglaToEnglishText = {
+    "ফলাফল": "Result",
+    "সংখ্যা": "Number",
+    "যোগফল": "Sum",
+    "নাম": "Name",
+    "ইনপুট": "Input",
+    "আউটপুট": "Output"
+  };
+
+  function convertBanglaDigitsToEnglish(text) {
+    return text.replace(/[০-৯]/g, d => banglaDigits[d] || d);
+  }
+
+  function convertEnglishDigitsToBangla(text) {
+    return text.replace(/\d/g, d => englishToBanglaDigits[d] || d);
+  }
+
+  function replaceOperators(text) {
+    const keysSorted = Object.keys(mapC).sort((a, b) => b.length - a.length);
+    for (const key of keysSorted) {
+      const re = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'g');
+      text = text.replace(re, mapC[key]);
     }
-    function convertEnglishDigitsToBangla(text) {
-      return text.replace(/[0-9]/g, d => enToBnDigits[d] || d);
+    return text;
+  }
+
+  function translateBanglaToC(code) {
+    let lines = code.split('\n');
+    let cCode = `#include <stdio.h>\nint main() {\n`;
+    for (let line of lines) {
+      line = convertBanglaDigitsToEnglish(line);
+      line = replaceOperators(line);
+      cCode += "  " + line + "\n";
     }
-    function replaceOperators(text) {
-      const keys = Object.keys(mapC).sort((a,b) => b.length - a.length);
-      for (let key of keys) {
-        let re = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'g');
-        text = text.replace(re, mapC[key]);
-      }
-      return text;
-    }
-    function translateBanglaToC(code) {
-      let lines = code.split('\n');
-      let result = '#include <stdio.h>\nint main() {\n';
-      for (let line of lines) {
-        line = convertBanglaDigitsToEnglish(line);
-        line = replaceOperators(line);
-        line = line.replace(/"(.*?)"/g, (m, p1) => {
-          for (let key in textMap) {
-            p1 = p1.replace(new RegExp(key, 'g'), textMap[key]);
-          }
-          return `"${p1}"`;
-        });
-        result += '  ' + line + '\n';
-      }
-      return result + '  return 0;\n}';
+    cCode += "  return 0;\n}";
+    return cCode;
+  }
+
+  function addToHistory(code, duration) {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    const now = new Date();
+    const time = now.toLocaleTimeString('bn-BD');
+    div.innerHTML = `<strong>⏱️ ${time}</strong> (${duration} সেকেন্ডে রান)<div class="history-meta">${code.replace(/\n/g, '<br>')}</div>`;
+    document.getElementById("history").prepend(div);
+  }
+
+  async function runBanglaCCode() {
+    const banglaCode = document.getElementById("banglaCode").value.trim();
+    const userInputRaw = document.getElementById("userInput").value;
+    const userInput = convertBanglaDigitsToEnglish(userInputRaw);
+
+    if (!banglaCode) {
+      alert("দয়া করে কোড লিখুন।");
+      return;
     }
 
-    function runBanglaCCode() {
-      const code = document.getElementById("banglaCode").value;
-      const input = convertBanglaDigitsToEnglish(document.getElementById("userInput").value);
-      const cCode = translateBanglaToC(code);
-      const startTime = Date.now();
-      document.getElementById("debug").textContent = cCode;
-      document.getElementById("output").textContent = "⏳ রান হচ্ছে...";
+    const translatedCode = translateBanglaToC(banglaCode);
+    document.getElementById("debug").textContent = translatedCode;
+    document.getElementById("output").textContent = "⏳ রান হচ্ছে...";
 
-      fetch("https://emkc.org/api/v2/piston/execute", {
+    try {
+      const startTime = performance.now();
+
+      const res = await fetch("https://emkc.org/api/v2/piston/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           language: "c",
           version: "10.2.0",
-          files: [{ name: "main.c", content: cCode }],
-          stdin: input
+          files: [{ name: "main.c", content: translatedCode }],
+          stdin: userInput
         })
-      })
-      .then(res => res.json())
-      .then(data => {
-        const endTime = Date.now();
-        const duration = ((endTime - startTime) / 1000).toFixed(2);
-        let raw = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
-        let final = convertEnglishDigitsToBangla(raw);
-        for (let key in textMap) {
-          final = final.replace(new RegExp(textMap[key], 'g'), key);
-        }
-        document.getElementById("output").textContent = final.trim();
-        addToHistory(code, duration);
       });
-    }
 
-    function addToHistory(code, duration) {
-      const div = document.createElement("div");
-      div.className = "history-item";
-      const now = new Date();
-      const time = now.toLocaleTimeString('bn-BD');
-      div.innerHTML = `<strong>⏱️ ${time}</strong> (${duration} সেকেন্ডে রান)<div class="history-meta">${code.replace(/\n/g, '<br>')}</div>`;
-      document.getElementById("history").prepend(div);
-    }
+      const data = await res.json();
+      const endTime = performance.now();
+      const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-    function clearAll() {
-      document.getElementById("banglaCode").value = "";
-      document.getElementById("userInput").value = "";
-      document.getElementById("output").textContent = "এখানে আউটপুট আসবে...";
-      document.getElementById("debug").textContent = "...";
-    }
+      let rawOutput = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
 
-    function clearHistory() {
-      document.getElementById("history").innerHTML = "";
-    }
+      rawOutput = convertEnglishDigitsToBangla(rawOutput);
 
-    function toggleMode() {
-      document.body.classList.toggle("dark");
-      document.body.classList.toggle("light");
+      for (const bnWord in banglaToEnglishText) {
+        const enWord = banglaToEnglishText[bnWord];
+        const re = new RegExp(enWord, "g");
+        rawOutput = rawOutput.replace(re, bnWord);
+      }
+
+      document.getElementById("output").textContent = rawOutput.trim();
+      addToHistory(banglaCode, duration);
+
+    } catch (err) {
+      document.getElementById("output").textContent = "❌ ত্রুটি: " + err.message;
     }
-  </script>
+  }
+
+  function clearAll() {
+    document.getElementById("banglaCode").value = "";
+    document.getElementById("userInput").value = "";
+    document.getElementById("output").textContent = "এখানে আউটপুট আসবে...";
+    document.getElementById("debug").textContent = "...";
+  }
+
+  function clearHistory() {
+    document.getElementById("history").innerHTML = "";
+  }
+
+  function saveCode() {
+    const code = document.getElementById("banglaCode").value;
+    if (!code.trim()) {
+      alert("সেভ করার জন্য কোড লিখুন!");
+      return;
+    }
+    localStorage.setItem("banglaCCode", code);
+    alert("কোড সেভ হয়েছে!");
+  }
+
+  function loadCode() {
+    const savedCode = localStorage.getItem("banglaCCode");
+    if (!savedCode) {
+      alert("কোনো সেভ করা কোড পাওয়া যায়নি!");
+      return;
+    }
+    document.getElementById("banglaCode").value = savedCode;
+    alert("কোড লোড হয়েছে!");
+  }
+
+  function exportCCode() {
+    const cCode = document.getElementById("debug").textContent;
+    if (!cCode || cCode === "..." || cCode.trim() === "") {
+      alert("রূপান্তরিত C কোড পাওয়া যায়নি!");
+      return;
+    }
+    const blob = new Blob([cCode], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "translated_code.c";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
 </body>
 </html>
