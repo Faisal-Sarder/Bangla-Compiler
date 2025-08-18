@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
   <meta charset="UTF-8" />
   <title>বাংলা কম্পাইলার</title>
@@ -12,6 +13,7 @@
       color: #1a1a1a;
       transition: background 0.3s, color 0.3s;
     }
+
     body.dark {
       background: #1a1a1a;
       color: #eaeaea;
@@ -55,22 +57,23 @@
       border-radius: 8px;
       background-color: #fff;
       resize: vertical;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
       transition: border-color 0.3s, background-color 0.3s, color 0.3s;
       color: #1a1a1a;
     }
+
     body.dark textarea {
       background-color: #2b2b2b;
       border-color: #444;
       color: #eaeaea;
-      box-shadow: inset 0 0 6px rgba(255,255,255,0.1);
+      box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.1);
     }
 
     textarea:focus {
       border-color: #007bff;
       outline: none;
       background-color: #fdfdfd;
-      box-shadow: 0 0 5px rgba(0,123,255,0.3);
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
     }
 
     body.dark textarea:focus {
@@ -112,7 +115,7 @@
       font-size: 15px;
       overflow-x: auto;
       line-height: 1.6;
-      box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
       transition: background-color 0.3s, color 0.3s;
       max-width: 800px;
     }
@@ -120,7 +123,7 @@
     body.dark pre {
       background-color: #2b2b2b;
       color: #eaeaea;
-      box-shadow: inset 0 0 6px rgba(255,255,255,0.1);
+      box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.1);
     }
 
     #history {
@@ -180,232 +183,463 @@
         margin-bottom: 10px;
       }
 
-      pre, #history {
+      pre,
+      #history {
         width: 100%;
       }
     }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .theme-btn {
+      background: transparent !important;
+      border: none !important;
+      padding: 6px 10px;
+      margin: 0;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 10px;
+      color: inherit;
+      transition: transform 0.25s, background-color 0.25s;
+    }
+
+    .theme-btn:hover {
+      transform: rotate(20deg);
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    body.dark .theme-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .theme-btn:focus-visible {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    .example-block {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #fafafa;
+      color: #222;
+      border: 1px solid #ccc;
+    }
+
+    body.dark .example-block {
+      background: #2b2b2b;
+      color: #ddd;
+      border-color: #444;
+    }
+
+    .example-block h4 {
+      margin: 0 0 8px;
+    }
+
+    .example-block pre {
+      background: #1e1e1e;
+      color: #dcdcdc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+
+    body.dark .example-block pre {
+      background: #3a3a3a;
+      color: #eaeaea;
+    }
+
+    .example-block button {
+      margin-top: 6px;
+      margin-right: 8px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
   </style>
 </head>
+
 <body class="light">
 
-<div class="container">
-  <div style="text-align: right; margin-bottom: 20px;">
-    <label>
-      ◑ Dark Mode
-      <input type="checkbox" id="toggleMode" onchange="toggleMode()" style="transform: scale(1.2); margin-left: 8px;">
-    </label>
+  <div class="container">
+    <div class="topbar">
+      <button id="themeToggle" class="theme-btn" aria-label="Toggle theme" title="থিম বদলাও">🌙</button>
+    </div>
+
+    <h1>🖥️ বাংলা কম্পাইলার</h1>
+
+    <label for="banglaCode">✍️ বাংলা C কোড লিখুন:</label>
+    <textarea id="banglaCode" placeholder="এখানে বাংলা ভাষায় C কোড লিখুন..."></textarea>
+
+    <label for="userInput">📥 ইনপুট (যদি প্রয়োজন হয়):</label>
+    <textarea id="userInput" placeholder="ইনপুট দিন (যদি কোডে প্রয়োজন হয়)"></textarea>
+
+    <div>
+      <button onclick="runBanglaCCode()">▶️ রান করো</button>
+      <button onclick="clearAll()">🧹 পরিষ্কার করো</button>
+      <button onclick="saveCode()">💾 সেভ করো</button>
+      <button onclick="loadCode()">📂 লোড করো</button>
+      <button onclick="exportCCode()">📤 Export .c</button>
+    </div>
+
+    <h3>📤 আউটপুট:</h3>
+    <pre id="output">এখানে আউটপুট আসবে...</pre>
+
+    <h3>🔎 রূপান্তরিত C কোড:</h3>
+    <pre id="debug">...</pre>
+
+    <h3>📜 রান হিস্ট্রি:</h3>
+    <div id="history"></div>
+    <div style="margin-top: 10px;">
+      <button onclick="clearHistory()">🧹 হিস্ট্রি মুছে ফেলো</button>
+    </div>
+    <!-- === Example Codes Section === -->
+    <h3>📚 উদাহরণ কোড:</h3>
+    <div id="examples"></div>
   </div>
 
-  <h1>🖥️ বাংলা কম্পাইলার</h1>
-
-  <label for="banglaCode">✍️ বাংলা C কোড লিখুন:</label>
-  <textarea id="banglaCode" placeholder="এখানে বাংলা ভাষায় C কোড লিখুন..."></textarea>
-
-  <label for="userInput">📥 ইনপুট (যদি প্রয়োজন হয়):</label>
-  <textarea id="userInput" placeholder="ইনপুট দিন (যদি কোডে প্রয়োজন হয়)"></textarea>
-
-  <div>
-    <button onclick="runBanglaCCode()">▶️ রান করো</button>
-    <button onclick="clearAll()">🧹 পরিষ্কার করো</button>
-    <button onclick="saveCode()">💾 সেভ করো</button>
-    <button onclick="loadCode()">📂 লোড করো</button>
-    <button onclick="exportCCode()">📤 Export .c</button>
-  </div>
-
-  <h3>📤 আউটপুট:</h3>
-  <pre id="output">এখানে আউটপুট আসবে...</pre>
-
-  <h3>🔎 রূপান্তরিত C কোড:</h3>
-  <pre id="debug">...</pre>
-
-  <h3>📜 রান হিস্ট্রি:</h3>
-  <div id="history"></div>
-  <div style="margin-top: 10px;">
-    <button onclick="clearHistory()">🧹 হিস্ট্রি মুছে ফেলো</button>
-  </div>
-</div>
-
-<script>
-  function toggleMode() {
-    document.body.classList.toggle("dark");
-    document.body.classList.toggle("light");
-  }
-
-  const mapC = {
-    "আউটপুট_দাও": "printf",
-    "ইনপুট_নাও": "scanf",
-    "যদি": "if",
-    "নাহলে": "else",
-    "জন্য": "for",
-    "যতক্ষণ": "while",
-    "ফাংশন": "void",
-    "প্রত্যাবর্তন": "return",
-    "পূর্ণসংখ্যা": "int",
-    "ভগ্নাংশ": "float",
-    "চর": "char",
-    "মূল": "main",
-    "সমান": "==",
-    "না_সমান": "!=",
-    "বড়": ">",
-    "ছোট": "<",
-    "এবং": "&&",
-    "অথবা": "||"
-  };
-
-  const banglaDigits = {
-    "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4",
-    "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9"
-  };
-
-  const englishToBanglaDigits = {
-    "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪",
-    "5": "৫", "6": "৬", "7": "৭", "8": "৮", "9": "৯"
-  };
-
-  const banglaToEnglishText = {
-    "ফলাফল": "Result",
-    "সংখ্যা": "Number",
-    "যোগফল": "Sum",
-    "নাম": "Name",
-    "ইনপুট": "Input",
-    "আউটপুট": "Output"
-  };
-
-  function convertBanglaDigitsToEnglish(text) {
-    return text.replace(/[০-৯]/g, d => banglaDigits[d] || d);
-  }
-
-  function convertEnglishDigitsToBangla(text) {
-    return text.replace(/\d/g, d => englishToBanglaDigits[d] || d);
-  }
-
-  function replaceOperators(text) {
-    const keysSorted = Object.keys(mapC).sort((a, b) => b.length - a.length);
-    for (const key of keysSorted) {
-      const re = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'g');
-      text = text.replace(re, mapC[key]);
-    }
-    return text;
-  }
-
-  function translateBanglaToC(code) {
-    let lines = code.split('\n');
-    let cCode = `#include <stdio.h>\nint main() {\n`;
-    for (let line of lines) {
-      line = convertBanglaDigitsToEnglish(line);
-      line = replaceOperators(line);
-      cCode += "  " + line + "\n";
-    }
-    cCode += "  return 0;\n}";
-    return cCode;
-  }
-
-  function addToHistory(code, duration) {
-    const div = document.createElement("div");
-    div.className = "history-item";
-    const now = new Date();
-    const time = now.toLocaleTimeString('bn-BD');
-    div.innerHTML = `<strong>⏱️ ${time}</strong> (${duration} সেকেন্ডে রান)<div class="history-meta">${code.replace(/\n/g, '<br>')}</div>`;
-    document.getElementById("history").prepend(div);
-  }
-
-  async function runBanglaCCode() {
-    const banglaCode = document.getElementById("banglaCode").value.trim();
-    const userInputRaw = document.getElementById("userInput").value;
-    const userInput = convertBanglaDigitsToEnglish(userInputRaw);
-
-    if (!banglaCode) {
-      alert("দয়া করে কোড লিখুন।");
-      return;
-    }
-
-    const translatedCode = translateBanglaToC(banglaCode);
-    document.getElementById("debug").textContent = translatedCode;
-    document.getElementById("output").textContent = "⏳ রান হচ্ছে...";
-
-    try {
-      const startTime = performance.now();
-
-      const res = await fetch("https://emkc.org/api/v2/piston/execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          language: "c",
-          version: "10.2.0",
-          files: [{ name: "main.c", content: translatedCode }],
-          stdin: userInput
-        })
+  <script>
+    // === Modern Theme Handling ===
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.body.classList.remove('light', 'dark');
+      document.body.classList.add(initial);
+      const btn = document.getElementById('themeToggle');
+      const syncIcon = () => {
+        const dark = document.body.classList.contains('dark');
+        btn.textContent = dark ? '☀️' : '🌙';
+        btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+        btn.title = dark ? 'লাইট মোড' : 'ডার্ক মোড';
+      };
+      syncIcon();
+      btn.addEventListener('click', () => {
+        const nowDark = !document.body.classList.contains('dark');
+        document.body.classList.toggle('dark', nowDark);
+        document.body.classList.toggle('light', !nowDark);
+        localStorage.setItem('theme', nowDark ? 'dark' : 'light');
+        syncIcon();
       });
+    })();
 
-      const data = await res.json();
-      const endTime = performance.now();
-      const duration = ((endTime - startTime) / 1000).toFixed(2);
+    // === Keyword Maps ===
+    const mapC = {
+      "নাহলে যদি": "else if", // keep longest phrase first
+      "আউটপুট_দাও": "printf",
+      "ইনপুট_নাও": "scanf",
+      "যদি": "if",
+      "নাহলে": "else",
+      "জন্য": "for",
+      "যতক্ষণ": "while",
+      "প্রত্যাবর্তন": "return",
+      "পূর্ণসংখ্যা": "int",
+      "ভগ্নাংশ": "float",
+      "চিহ্ন": "char",
+      "মূল": "main",
+      "সমান": "==",
+      "সমান_না": "!=",
+      "বড়": ">",
+      "ছোট": "<",
+      "এবং": "&&",
+      "অথবা": "||"
+    };
 
-      let rawOutput = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
+    const banglaDigits = { "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4", "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9" };
+    const englishToBanglaDigits = { "0": "০", "1": "১", "2": "২", "3": "৩", "4": "৪", "5": "৫", "6": "৬", "7": "৭", "8": "৮", "9": "৯" };
+    const banglaToEnglishText = { "ফলাফল": "Result", "সংখ্যা": "Number", "যোগফল": "Sum", "নাম": "Name", "ইনপুট": "Input", "আউটপুট": "Output" };
 
-      rawOutput = convertEnglishDigitsToBangla(rawOutput);
+    function convertBanglaDigitsToEnglish(text) {
+      return text.replace(/[০-৯]/g, d => banglaDigits[d] || d);
+    }
+    function convertEnglishDigitsToBangla(text) {
+      return text.replace(/\d/g, d => englishToBanglaDigits[d] || d);
+    }
 
-      for (const bnWord in banglaToEnglishText) {
-        const enWord = banglaToEnglishText[bnWord];
-        const re = new RegExp(enWord, "g");
-        rawOutput = rawOutput.replace(re, bnWord);
+    function replaceOperators(text) {
+      const keys = Object.keys(mapC).sort((a, b) => b.length - a.length); // longest first
+      for (const key of keys) {
+        const re = new RegExp(`(?<!\\w)${key}(?!\\w)`, 'g');
+        text = text.replace(re, mapC[key]);
+      }
+      return text;
+    }
+
+    // === CORE FIX: wrap statements inside main() when user didn't write one ===
+    function translateBanglaToC(code) {
+      let src = code.replace(/\r\n/g, "\n");
+      src = convertBanglaDigitsToEnglish(src);
+      src = replaceOperators(src); // turns keywords to C
+
+      const trimmed = src.trim();
+
+      // Detect if user already has a main function (either after replacement or in original Bengali)
+      const hasMain = /(\n|^)\s*(int|float|double|char|void)\s+main\s*\(/.test(trimmed) || /(\n|^)\s*পূর্ণসংখ্যা\s+মূল\s*\(/.test(code);
+
+      let cCode = "#include <stdio.h>\n\n";
+
+      if (hasMain) {
+        // User provided their own main / functions: do not wrap
+        cCode += trimmed + "\n";
+      } else {
+        // Wrap entire provided code inside a main function
+        const body = trimmed.split('\n').map(l => '  ' + l).join('\n');
+        cCode += "int main() {\n" + body + "\n  return 0;\n}\n";
       }
 
-      document.getElementById("output").textContent = rawOutput.trim();
-      addToHistory(banglaCode, duration);
-
-    } catch (err) {
-      document.getElementById("output").textContent = "❌ ত্রুটি: " + err.message;
+      return cCode;
     }
-  }
 
-  function clearAll() {
-    document.getElementById("banglaCode").value = "";
-    document.getElementById("userInput").value = "";
-    document.getElementById("output").textContent = "এখানে আউটপুট আসবে...";
-    document.getElementById("debug").textContent = "...";
-  }
-
-  function clearHistory() {
-    document.getElementById("history").innerHTML = "";
-  }
-
-  function saveCode() {
-    const code = document.getElementById("banglaCode").value;
-    if (!code.trim()) {
-      alert("সেভ করার জন্য কোড লিখুন!");
-      return;
+    function addToHistory(code, duration) {
+      const div = document.createElement("div");
+      div.className = "history-item";
+      const now = new Date();
+      const time = now.toLocaleTimeString('bn-BD');
+      div.innerHTML = `<strong>⏱️ ${time}</strong> (${duration} সেকেন্ডে রান)<div class="history-meta">${code.replace(/\n/g, '<br>')}</div>`;
+      document.getElementById("history").prepend(div);
     }
-    localStorage.setItem("banglaCCode", code);
-    alert("কোড সেভ হয়েছে!");
-  }
 
-  function loadCode() {
-    const savedCode = localStorage.getItem("banglaCCode");
-    if (!savedCode) {
-      alert("কোনো সেভ করা কোড পাওয়া যায়নি!");
-      return;
-    }
-    document.getElementById("banglaCode").value = savedCode;
-    alert("কোড লোড হয়েছে!");
-  }
+    async function runBanglaCCode() {
+      const banglaCode = document.getElementById("banglaCode").value.trim();
+      const userInputRaw = document.getElementById("userInput").value;
+      const userInput = convertBanglaDigitsToEnglish(userInputRaw);
 
-  function exportCCode() {
-    const cCode = document.getElementById("debug").textContent;
-    if (!cCode || cCode === "..." || cCode.trim() === "") {
-      alert("রূপান্তরিত C কোড পাওয়া যায়নি!");
-      return;
+      if (!banglaCode) { alert("দয়া করে কোড লিখুন।"); return; }
+
+      const translatedCode = translateBanglaToC(banglaCode);
+      document.getElementById("debug").textContent = translatedCode;
+      document.getElementById("output").textContent = "⏳ রান হচ্ছে...";
+
+      try {
+        const startTime = performance.now();
+        const res = await fetch("https://emkc.org/api/v2/piston/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            language: "c",
+            version: "10.2.0",
+            files: [{ name: "main.c", content: translatedCode }],
+            stdin: userInput
+          })
+        });
+
+        const data = await res.json();
+        const endTime = performance.now();
+        const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+        let rawOutput = data.run?.stdout || data.run?.stderr || "⚠️ কোনো আউটপুট পাওয়া যায়নি।";
+        rawOutput = convertEnglishDigitsToBangla(rawOutput);
+        for (const bnWord in banglaToEnglishText) {
+          const enWord = banglaToEnglishText[bnWord];
+          const re = new RegExp(enWord, "g");
+          rawOutput = rawOutput.replace(re, bnWord);
+        }
+
+        document.getElementById("output").textContent = rawOutput.trim();
+        addToHistory(banglaCode, duration);
+
+      } catch (err) {
+        document.getElementById("output").textContent = "❌ ত্রুটি: " + err.message;
+      }
     }
-    const blob = new Blob([cCode], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "translated_code.c";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-</script>
+
+    function clearAll() {
+      document.getElementById("banglaCode").value = "";
+      document.getElementById("userInput").value = "";
+      document.getElementById("output").textContent = "এখানে আউটপুট আসবে...";
+      document.getElementById("debug").textContent = "...";
+    }
+
+    function clearHistory() { document.getElementById("history").innerHTML = ""; }
+
+    function saveCode() {
+      const code = document.getElementById("banglaCode").value;
+      if (!code.trim()) { alert("সেভ করার জন্য কোড লিখুন!"); return; }
+      localStorage.setItem("banglaCCode", code);
+      alert("কোড সেভ হয়েছে!");
+    }
+
+    function loadCode() {
+      const savedCode = localStorage.getItem("banglaCCode");
+      if (!savedCode) { alert("কোনো সেভ করা কোড পাওয়া যায়নি!"); return; }
+      document.getElementById("banglaCode").value = savedCode;
+      alert("কোড লোড হয়েছে!");
+    }
+
+    function exportCCode() {
+      const cCode = document.getElementById("debug").textContent;
+      if (!cCode || cCode === "..." || cCode.trim() === "") { alert("রূপান্তরিত C কোড পাওয়া যায়নি!"); return; }
+      const blob = new Blob([cCode], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "translated_code.c";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    // === Example Codes ===
+    const examples = [
+      {
+        title: "১: প্রিন্ট",
+        code: `আউটপুট_দাও("হ্যালো বাংলা কম্পাইলার!\\n");`
+      },
+      {
+        title: "২: ভেরিয়েবল যোগফল",
+        code: `পূর্ণসংখ্যা ক = ৫;
+পূর্ণসংখ্যা খ = ৭;
+পূর্ণসংখ্যা যোগফল = ক + খ;
+আউটপুট_দাও("যোগফল = %d\\n", যোগফল);`
+      },
+      {
+        title: "৩: ইনপুট নিয়ে আউটপুট",
+        code: `পূর্ণসংখ্যা সংখ্যা;
+ইনপুট_নাও("%d", &সংখ্যা);
+আউটপুট_দাও("আপনি লিখেছেন: %d\\n", সংখ্যা);`
+      },
+      {
+        title: "৪: if / else",
+        code: `পূর্ণসংখ্যা সংখ্যা = ১০;
+
+যদি (সংখ্যা বড় ৫) {
+    আউটপুট_দাও("সংখ্যা ৫ এর থেকে বড়\\n");
+} নাহলে {
+    আউটপুট_দাও("সংখ্যা ছোট অথবা সমান ৫\\n");
+}`
+      },
+      {
+        title: "৫: for লুপ",
+        code: `জন্য (পূর্ণসংখ্যা ক = ১; ক <= ৫; ক = ক + ১) {
+    আউটপুট_দাও("%d\\n", ক);
+}`
+      },
+      {
+        title: "৬: while লুপ",
+        code: `পূর্ণসংখ্যা ক = ১;
+
+যতক্ষণ (ক <= ৩) {
+    আউটপুট_দাও("%d\\n", ক);
+    ক = ক + ১;
+}`
+      },
+      {
+        title: "৭: ইনপুট নিয়ে যোগফল",
+        code: `পূর্ণসংখ্যা ক, খ;
+ইনপুট_নাও("%d %d", &ক, &খ);
+পূর্ণসংখ্যা যোগ = ক + খ;
+আউটপুট_দাও("যোগফল = %d\\n", যোগ);`
+      },
+      {
+        title: "৮: সংখ্যা জোড় / বিজোড় চেক",
+        code: `পূর্ণসংখ্যা সংখ্যা;
+ইনপুট_নাও("%d", &সংখ্যা);
+যদি (সংখ্যা % 2 == 0) {
+    আউটপুট_দাও("সংখ্যাটি জোড়\\n");
+} নাহলে {
+    আউটপুট_দাও("সংখ্যাটি বিজোড়\\n");
+}`
+      },
+      {
+        title: "৯: গুনফল টেবিল (for লুপ)",
+        code: `পূর্ণসংখ্যা সংখ্যা;
+আউটপুট_দাও("সংখ্যাটির গুনফল: \\n");
+ইনপুট_নাও("%d", &সংখ্যা);
+
+জন্য (পূর্ণসংখ্যা ক = ১; ক <= ১০; ক = ক + ১) {
+    আউটপুট_দাও("%d x %d = %d\\n", সংখ্যা, ক, সংখ্যা * ক);
+}`
+      },
+      {
+        title: "১০: factorial (while লুপ)",
+        code: `পূর্ণসংখ্যা n;
+পূর্ণসংখ্যা ফ্যাক্ট = ১;
+পূর্ণসংখ্যা ক;
+ইনপুট_নাও("%d", &n);
+
+ক = n;
+যতক্ষণ (ক > 0) {
+    ফ্যাক্ট = ফ্যাক্ট * ক;
+    ক = ক - ১;
+}
+আউটপুট_দাও("%d এর ফ্যাক্টরিয়াল = %d\\n", n, ফ্যাক্ট);`
+      },
+      {
+        title: "১১: নাম নিয়ে স্বাগতম বার্তা",
+        code: `char নাম[৩০];
+ইনপুট_নাও("%s", নাম);
+আউটপুট_দাও("%s!\\n", নাম);`
+      },
+      {
+        title: "১২: সংখ্যা বড়/ছোট তুলনা",
+        code: `পূর্ণসংখ্যা ক, খ;
+ইনপুট_নাও("%d %d", &ক, &খ);
+
+যদি (ক > খ) {
+    আউটপুট_দাও("%d বড়\\n", ক);
+} নাহলে যদি (ক < খ) {
+    আউটপুট_দাও("%d বড়\\n", খ);
+} নাহলে {
+    আউটপুট_দাও("দুটি সংখ্যা সমান\\n");
+}`
+      },
+      {
+        title: "১৩: সহজ যোগফল ফাংশন ব্যবহার করে",
+        code: `পূর্ণসংখ্যা যোগফল(পূর্ণসংখ্যা ক, পূর্ণসংখ্যা খ) {
+    প্রত্যাবর্তন ক + খ;
+}
+
+পূর্ণসংখ্যা মূল() {
+    পূর্ণসংখ্যা ক = ৩;
+    পূর্ণসংখ্যা খ = ৭;
+    আউটপুট_দাও("যোগফল = %d\\n", যোগফল(ক, খ));
+    প্রত্যাবর্তন 0;
+}`
+      },
+      {
+        title: "১৪: nested loop (প্যাটার্ন প্রিন্ট)",
+        code: `পূর্ণসংখ্যা i, j;
+জন্য (i = ১; i <= ৫; i = i + ১) {
+    জন্য (j = ১; j <= i; j = j + ১) {
+        আউটপুট_দাও("*");
+    }
+    আউটপুট_দাও("\\n");
+}`
+      }
+    ];
+
+
+    // Render examples dynamically
+    const examplesContainer = document.getElementById("examples");
+    examples.forEach((ex, idx) => {
+      const block = document.createElement("div");
+      block.className = "example-block";
+      block.innerHTML = `
+    <h4>${ex.title}</h4>
+    <pre>${ex.code}</pre>
+    <button onclick="copyExample(${idx})">📋 কপি</button>
+    <button onclick="sendToEditor(${idx})">⤴️ এডিটরে পাঠাও</button>
+  `;
+      examplesContainer.appendChild(block);
+    });
+
+    function copyExample(i) {
+      navigator.clipboard.writeText(examples[i].code);
+      alert("✅ কোড কপি হয়েছে!");
+    }
+
+    function sendToEditor(i) {
+      document.getElementById("banglaCode").value = examples[i].code;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+  </script>
 </body>
 </html>
